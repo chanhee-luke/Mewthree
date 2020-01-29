@@ -1,0 +1,2 @@
+# Mewthree
+Pokemon Showdown Bot
