@@ -3,6 +3,14 @@ Mewthree is a Pokémon Showdown battle-bot that can play battles on [Pokemon Sho
 
 This project is forked from https://github.com/pmariglia/showdown.
 
+This bot is assuming we're doing random battles in generation 5.
+
+This bot has a Makefile, where you must run "make install" and then "make test" to run the bot.
+
+Currently, it only switches into the safest Pokemon using Maximin.
+
+## PMariglia's ReadMe on the Engine Below:
+
 The bot can play single battles in generations 4 through 8 however some of the battle mechanics assume it is gen8.
 
 ![badge](https://action-badges.now.sh/pmariglia/showdown)
