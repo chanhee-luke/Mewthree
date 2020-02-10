@@ -9,7 +9,7 @@ This bot has a Makefile, where you must run "make install" and then "make test" 
 
 Currently, it only switches into the safest Pokemon using Maximin.
 
-## PMariglia's ReadMe on the Engine Below:
+# Everything below is PMariglia's ReadMe on the Engine:
 
 The bot can play single battles in generations 4 through 8 however some of the battle mechanics assume it is gen8.
 
