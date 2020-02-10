@@ -5,7 +5,7 @@ This project is forked from https://github.com/pmariglia/showdown.
 
 This bot is assuming we're doing random battles in generation 5.
 
-This bot has a Makefile, where you must run "make install" and then "make test" to run the bot.
+This bot has a Makefile, where you must run `make install` and then `make test` to run the bot. `make clean` will remove the virtual environment installed.
 
 Currently, it only switches into the safest Pokemon using Maximin.
 
