@@ -32,15 +32,21 @@ For the bot:
 - pandas==0.23.4
 - numpy==1.16.2
 
-### Install Dependencies & Set up Runtime Environment
+### Install Dependencies
 
 `make install`
 
-This command creates a new Python virtualenv called **milestone1** and performs pip install of all requirements
+Performs pip install of all requirements
 
-### Running the bot
+### Set up Runtime Environment and Running the Bot
 
-0. This assumes above step is ran
+`make build`
+
+Creates a Python virtualenv and runs the bot
+
+### Testing the Bot
+
+0. This dependencies are all installed
 1. Create an acount on the [pokemonshowdown.com](pokemonshowdown.com) website
 2. Edit the .env file on the repository and set `PS_USERNAME` and `PS_PASSWORD` to the created username and password
 3. Log in to the game website
