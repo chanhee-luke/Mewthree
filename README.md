@@ -21,6 +21,7 @@ Currently, it only switches into the safest Pokemon using Maximin.
 ### Dependencies
 
 No dependency for the game (web-based game)
+
 For the bot:
 - python==3.6.3
 - requests==2.20.1
@@ -44,8 +45,6 @@ This command creates a new Python virtualenv called **milestone1** and performs 
 2. Edit the .env file on the repository and set `PS_USERNAME` and `PS_PASSWORD` to the created username and password
 3. Log in to the game website
 4. Run `make test` and see the bot starting the game doing your job!
-
-
 
 
 # Everything below is PMariglia's ReadMe on the Engine:
