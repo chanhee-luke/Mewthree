@@ -9,6 +9,45 @@ This bot has a Makefile, where you must run `make install` and then `make test` 
 
 Currently, it only switches into the safest Pokemon using Maximin.
 
+## Milestone 1 (02/23)
+
+### Overview of the bot
+
+- Control mechnism: We use behavior tree as the main control mechanism of our bot
+- High-level strategy: The bot is based on the maximin strategy. The bot first decides if it needs to attack or switch, then builds the tree for either attacking or switching. The bot currently searches for only depth 1 and does not account the opponents moves. This is a future work we will implement later in the milestone. 
+- Implemented functionality: The bot is fully functional and can beat a bad opponent
+
+
+### Dependencies
+
+No dependency for the game (web-based game)
+For the bot:
+- python==3.6.3
+- requests==2.20.1
+- environs==4.1.0
+- websockets==7.0
+- python-dateutil==2.8.0
+- nashpy==0.0.17
+- pandas==0.23.4
+- numpy==1.16.2
+
+### Install Dependencies & Set up Runtime Environment
+
+`make install`
+
+This command creates a new Python virtualenv called **milestone1** and performs pip install of all requirements
+
+### Running the bot
+
+0. This assumes above step is ran
+1. Create an acount on the [pokemonshowdown.com](pokemonshowdown.com) website
+2. Edit the .env file on the repository and set `PS_USERNAME` and `PS_PASSWORD` to the created username and password
+3. Log in to the game website
+4. Run `make test` and see the bot starting the game doing your job!
+
+
+
+
 # Everything below is PMariglia's ReadMe on the Engine:
 
 The bot can play single battles in generations 4 through 8 however some of the battle mechanics assume it is gen8.
