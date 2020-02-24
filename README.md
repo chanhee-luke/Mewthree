@@ -9,7 +9,7 @@ This bot has a Makefile, where you must run `make install` and then `make test` 
 
 Currently, it only switches into the safest Pokemon using Maximin.
 
-## Milestone 1 (02/23)
+## Milestone 2 (02/23)
 
 ### Overview of the bot
 
