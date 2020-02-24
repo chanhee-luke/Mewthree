@@ -44,13 +44,13 @@ Performs pip install of all requirements
 
 Creates a Python virtualenv and runs the bot
 
-### Testing the Bot
+### Running/Testing the Bot
 
 0. This dependencies are all installed
 1. Create an acount on the [pokemonshowdown.com](pokemonshowdown.com) website
 2. Edit the .env file on the repository and set `PS_USERNAME` and `PS_PASSWORD` to the created username and password
 3. Log in to the game website
-4. Run `make test` and see the bot starting the game doing your job!
+4. Run `make build` and see the bot starting the game doing your job!
 
 
 # Everything below is PMariglia's ReadMe on the Engine:
