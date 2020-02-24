@@ -46,7 +46,7 @@ Creates a Python virtualenv and runs the bot
 
 ### Running/Testing the Bot
 
-0. This dependencies are all installed
+0. Check if dependencies are all installed
 1. Create an acount on the [pokemonshowdown.com](https://pokemonshowdown.com) website
 2. Edit the .env file on the repository and set `PS_USERNAME` and `PS_PASSWORD` to the created username and password
 3. Log in to the game website
