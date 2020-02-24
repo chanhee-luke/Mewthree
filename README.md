@@ -15,7 +15,7 @@ Currently, it only switches into the safest Pokemon using Maximin.
 
 - Control mechnism: We use behavior tree as the main control mechanism of our bot
 - High-level strategy: The bot is based on the maximin strategy. The bot first decides if it needs to attack or switch, then builds the tree for either attacking or switching. The bot currently searches for only depth 1 and does not account the opponents moves. This is a future work we will implement later in the milestone. 
-- Implemented functionality: The bot is fully functional and will finish matches. There are a few bot breaking errors that occur in very specific battle situations
+- Implemented functionality: The bot is fully functional and will finish matches. There are a few edge cases such as all pokemons are out of move points (pp) that the bot fails to forfeit, since our bot isn't designed to forfeit and let the timer run out. We did not think this was a error that needs to be caught because once all pokemons are out of pp we lose anyways and is a very rare case. 
 
 
 ### Dependencies
