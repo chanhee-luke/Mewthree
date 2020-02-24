@@ -1,7 +1,15 @@
-# Showdown  ![mewthree](https://vignette.wikia.nocookie.net/pokemon/images/3/3b/Mewthree_manga.png/revision/latest?cb=20130407033659)
-Showdown is a Pokémon battle-bot that can play battles on [Pokemon Showdown](https://pokemonshowdown.com/).
+# Mewthree  ![mewthree](https://vignette.wikia.nocookie.net/pokemon/images/3/3b/Mewthree_manga.png/revision/latest?cb=20130407033659)
+Mewthree is a Pokémon Showdown battle-bot that can play battles on [Pokemon Showdown](https://pokemonshowdown.com/).
 
 This project is forked from https://github.com/pmariglia/showdown.
+
+This bot is assuming we're doing random battles in generation 5.
+
+This bot has a Makefile, where you must run `make install` and then `make test` to run the bot. `make clean` will remove the virtual environment installed.
+
+Currently, it only switches into the safest Pokemon using Maximin.
+
+# Everything below is PMariglia's ReadMe on the Engine:
 
 The bot can play single battles in generations 4 through 8 however some of the battle mechanics assume it is gen8.
 
