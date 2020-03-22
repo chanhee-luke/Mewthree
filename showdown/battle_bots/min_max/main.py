@@ -9,12 +9,15 @@ from data.helpers import get_pokemon_sets
 from ..helpers import format_decision
 from data.helpers import get_all_likely_moves
 from showdown.engine.damage_calculator import _calculate_damage
+from showdown.engine.damage_calculator import get_move
 
 from .tree import Tree
 
 from config import logger
 
-def switchTreeTraversalDFS(root):
+from data import all_move_json
+
+def treeTraversalDFS(root):
     highest = None
     check = []
     visited = set()
@@ -27,7 +30,6 @@ def switchTreeTraversalDFS(root):
         visited.add(node)
 
         if node.maximinScore:
-            logger.debug("Potential switch Pokemon: {} with worst damage score {}".format(node.data,node.maximinScore))
             if highest == None:
                 highest = node
             if highest.maximinScore < node.maximinScore:
@@ -37,17 +39,97 @@ def switchTreeTraversalDFS(root):
 
     if highest == None:
         return None
-    logger.info("Action:{}".format(highest.data))
     return highest.data
 
 class BattleBot(Battle):
     def __init__(self, *args, **kwargs):
         super(BattleBot, self).__init__(*args, **kwargs)
 
+    def attack_or_switch(self):
+        if self.user.last_used_move[1].startswith("switch"):
+            return "ATTACK"
+        if self.user.active.hp == 0:
+            return "SWITCH"
+        waitingPkm = False;
+        for pkm in self.user.reserve:
+            if not pkm.fainted:
+                waitingPkm = True
+                break
+        if not waitingPkm:
+            return "ATTACK"
+        battle_copy = deepcopy(self)
+        battle_copy.opponent.lock_moves()
+        try:
+            pokemon_sets = get_pokemon_sets(battle_copy.opponent.active.name)
+        except KeyError:
+            logger.warning("No set for {}".format(battle_copy.opponent.active.name))
+            return
+        opponent_possible_moves = sorted(pokemon_sets[MOVES_STRING], key=lambda x: x[1], reverse=True)
+        worstCaseDmgTaken = 0
+        for move in opponent_possible_moves:
+            if move[0].startswith("hiddenpower"):
+                continue
+            selfCopy = deepcopy(self)
+            state = selfCopy.create_state()
+            damageEstimate = _calculate_damage(state.opponent.active,state.self.active,move[0])
+            if damageEstimate != None:
+                if damageEstimate[0] > worstCaseDmgTaken:
+                    worstCaseDmgTaken = damageEstimate[0]
+        bestCaseDmgGiven = 0
+        for move in self.user.active.moves:
+            if move.name.startswith("hiddenpower"):
+                continue
+            selfCopy = deepcopy(self)
+            state = selfCopy.create_state()
+            attacking_move = deepcopy(all_move_json.get(move.name, None))
+
+            attacking_type = attacking_move.get(constants.CATEGORY)
+            if attacking_type == constants.STATUS:
+                score = 40
+            else:
+                score = _calculate_damage(state.self.active,state.opponent.active,move.name)[0]
+            if score != None:
+                if score > bestCaseDmgGiven:
+                    bestCaseDmgGiven = score
+        if bestCaseDmgGiven >= worstCaseDmgTaken:
+            return "ATTACK"
+        else:
+            return "SWITCH"
+
+
+
+    def find_best_attack(self):
+        #build tree
+        attackRoot = Tree()
+        # find worst case move used on each possible switched in Pokemon
+        battle_copy = deepcopy(self)
+        battle_copy.opponent.lock_moves()
+        if self.user.active.hp == 0:
+            return attackRoot
+        for move in self.user.active.moves:
+            if move.name.startswith("hiddenpower"):
+                continue
+            if move.current_pp == 0:
+                continue
+            selfCopy = deepcopy(self)
+            state = selfCopy.create_state()
+            attacking_move = deepcopy(all_move_json.get(move.name, None))
+
+            attacking_type = attacking_move.get(constants.CATEGORY)
+            if attacking_type == constants.STATUS:
+                score = 25
+            else:
+                score = _calculate_damage(state.self.active,state.opponent.active,move.name)[0]
+            switchNode = Tree()
+            switchNode.data = move.name
+            switchNode.maximinScore = score
+            attackRoot.children.append(switchNode)
+        return treeTraversalDFS(attackRoot)
+
+
     def find_best_switch(self):
         #build tree
         switchRoot = Tree()
-
         # find worst case move used on each possible switched in Pokemon
         battle_copy = deepcopy(self)
         battle_copy.opponent.lock_moves()
@@ -74,13 +156,18 @@ class BattleBot(Battle):
                         worstCase = damageEstimate[0]
             switchNode = Tree()
             switchNode.data = "switch " + reservePkm.name
-            switchNode.maximinScore = worstCase*-1
+            switchNode.maximinScore = worstCase*-0.667
             switchRoot.children.append(switchNode)
 
         # traverse Tree with root switchRoot
-        return switchTreeTraversalDFS(switchRoot)
+        return treeTraversalDFS(switchRoot)
 
     def find_best_move(self):
-        bot_choice = self.find_best_switch()
-        logger.debug("Switching: {}".format(bot_choice))
+        if self.attack_or_switch() is "ATTACK":
+            print("ATTACK")
+            bot_choice = self.find_best_attack()
+        else:
+            print("SWITCH")
+            bot_choice = self.find_best_switch()
+        logger.debug("Using: {}".format(bot_choice))
         return format_decision(self, bot_choice)
