@@ -9,7 +9,7 @@ This bot has a Makefile, where you must run `make install` and then `make test` 
 
 Currently, it only switches into the safest Pokemon using Maximin.
 
-## Milestone 2 (02/23)
+## Milestone 2 & 3 (03/23)
 
 ### Overview of the bot
 
@@ -17,6 +17,9 @@ Currently, it only switches into the safest Pokemon using Maximin.
 - High-level strategy: The bot is based on the maximin strategy. The bot first decides if it needs to attack or switch, then builds the tree for either attacking or switching. The bot currently searches for only depth 1 and does not account the opponents moves. This is a future work we will implement later in the milestone. 
 - Implemented functionality: The bot is fully functional and will finish matches. There are a few edge cases such as all pokemons are out of move points (pp) that the bot fails to forfeit, since our bot isn't designed to forfeit and let the timer run out. We did not think this was a error that needs to be caught because once all pokemons are out of pp we lose anyways and is a very rare case. 
 
+### For Milestone 3
+
+For this milestone the bot searchs beyond the current game state to future game states upto depth 3. This enables the bot to function more intelligently by guessing the opponent's moves and acting accordingly. Still the bot makes the decision based on the min_max strategy by picking the move that is "safest" i.e. minimizing the potential loss.
 
 ### Dependencies
 
