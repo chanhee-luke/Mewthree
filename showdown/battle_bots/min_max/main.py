@@ -17,6 +17,11 @@ from config import logger
 
 from data import all_move_json
 
+from showdown.engine.objects import StateMutator
+from showdown.engine.select_best_move import get_payoff_matrix
+from showdown.engine.select_best_move import remove_guaranteed_opponent_moves
+from collections import defaultdict
+
 def treeTraversalDFS(root):
     highest = None
     check = []
@@ -162,7 +167,7 @@ class BattleBot(Battle):
         # traverse Tree with root switchRoot
         return treeTraversalDFS(switchRoot)
 
-    def find_best_move(self):
+    def find_best_move_milestone2(self):
         if self.attack_or_switch() is "ATTACK":
             print("ATTACK")
             bot_choice = self.find_best_attack()
@@ -170,4 +175,47 @@ class BattleBot(Battle):
             print("SWITCH")
             bot_choice = self.find_best_switch()
         logger.debug("Using: {}".format(bot_choice))
+        return format_decision(self, bot_choice)
+
+    ################################################
+    # Below is Milestone 3
+    ################################################
+
+    def pick_safest(self, score_lookup):
+        # Helper function that gets rid of moves that have no option
+        modified_score_lookup = remove_guaranteed_opponent_moves(score_lookup)
+        if not modified_score_lookup:
+            modified_score_lookup = score_lookup
+        worst_case = defaultdict(lambda: (tuple(), float('inf')))
+
+        # Simply selects the highest scoring move
+        for move_pair, result in modified_score_lookup.items():
+            if worst_case[move_pair[0]][1] > result:
+                worst_case[move_pair[0]] = move_pair, result
+
+        safest = max(worst_case, key=lambda x: worst_case[x][1])
+        return worst_case[safest]
+
+
+    def pick_bfs_safest_move(self, battle):
+
+        state = battle.create_state()
+        mutator = StateMutator(state)
+        user_options, opponent_options = battle.get_all_options()
+        logger.debug("Attempting to find best move from: {}".format(mutator.state))
+
+        # Builds a tree to search for opponent's moves
+        scores = get_payoff_matrix(mutator, user_options, opponent_options, depth=3, prune=True)
+
+        logger.debug(f"Scores: {scores}")
+        
+        decision, payoff = self.pick_safest(scores)
+        bot_choice = decision[0]
+        logger.debug(f"Safest: {bot_choice}, {payoff}")
+        return bot_choice
+    
+
+    def find_best_move(self):
+        battles = self.prepare_battles(join_moves_together=True)
+        bot_choice = self.pick_bfs_safest_move(battles[0])
         return format_decision(self, bot_choice)
