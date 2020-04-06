@@ -219,3 +219,64 @@ class BattleBot(Battle):
         battles = self.prepare_battles(join_moves_together=True)
         bot_choice = self.pick_bfs_safest_move(battles[0])
         return format_decision(self, bot_choice)
+    
+    
+    ################################################
+    # Below is Milestone 4
+    ################################################
+
+    #helper function for calculating stats
+    def stat_calculation(base, level, ev):
+        # calculating stats from base stat, level, and ev
+        return floor(((2 * base + 31 + floor(ev / 4)) * level) / 100 + 5)
+
+    def pokemonEfficiency(battle, pokemon1, pokemon2, team):
+        # comparing efficiency of user pokemon vs opponent pokemon
+        # if efficiency of pokemon is greater than 150, the other pokemon's efficiency isn't taken
+        # also note: pokemonEfficiency(a, b, team_a) = - pokemonEfficiency(b, a, team_b)
+        efficiency1 = 0
+        efficiency2 = 0
+
+        pokemon1_stat = stat_calculation(pokemon1.stats["spe"], pokemon1.level, 252) * pokemon1.buff_affect("spe")
+        pokemon2_stat = stat_calculation(pokemon2.stats["spe"], pokemon2.level, 252) * pokemon2.buff_affect("spe")
+
+        for move in pokemon1.moves:
+            dmg = effi_move(battle, move, pokemon1, pokemon2, team)
+            if efficiency1 < dmg:
+                efficiency1 = dmg
+
+        if efficiency1 >= comparator_calculation(150, pokemon1, pokemon2) and pokemon1_stat > pokemon2_stat:
+            return efficiency1
+
+        for move in pokemon2.moves:
+            dmg = effi_move(battle, move, pokemon2, pokemon1, team)
+            if efficiency2 < dmg:
+                efficiency2 = dmg
+
+        if efficiency2 >= comparator_calculation(150, pokemon1, pokemon2) and pokemon2_stat > pokemon1_stat:
+            return -efficiency2
+
+        return efficiency1 - efficiency2
+
+    def make_best_order(self, battle):
+        #returns users list of pokemons sorted by efficiency
+
+        team = battle.user
+        opponent = battle.opponent
+
+        orderedTeam = []
+
+        for i, pokemon in enumerate(team.reserve):
+            avgEfficiency = 0
+
+            for enemy_pokemon in opponent.reserve:
+
+                efficiency = -1024
+                efficiency = pokemonEfficiency(battle, pokemon, enemy_pokemon, opponent)
+                avgEfficiency += efficiency
+
+            avgEfficiency /= 6
+            orderedTeam.append([i + 1, avgEfficiency])
+            orderedTeam.sort(key=lambda x: x[1], reverse=True)
+
+        return orderedTeam
