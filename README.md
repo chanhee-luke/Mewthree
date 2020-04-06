@@ -9,7 +9,7 @@ This bot has a Makefile, where you must run `make install` and then `make test` 
 
 Currently, it only switches into the safest Pokemon using Maximin.
 
-## Milestone 2 & 3 (03/23)
+## Milestone 2 & 3 & 4 (04/06)
 
 ### Overview of the bot
 
@@ -20,6 +20,10 @@ Currently, it only switches into the safest Pokemon using Maximin.
 ### For Milestone 3
 
 For this milestone the bot searchs beyond the current game state to future game states upto depth 3. This enables the bot to function more intelligently by guessing the opponent's moves and acting accordingly. Still the bot makes the decision based on the min_max strategy by picking the move that is "safest" i.e. minimizing the potential loss.
+
+### For Milestone 4
+
+In this latest update, the bot has been given some new features in order to improve its Pokemon selection against the opponent. We included a make_best_order() which ranks the user's pokemons based on their damage compared to the enemy team. It returns a list of pokemons which has been sorted by their efficiencies. It compares each of the bot's Pokemons with that of the opponent. In order to do this, there is an additional funciton pokemonEfficiency() to calculate their efficiency based on their stats.
 
 ### Dependencies
 
