@@ -176,6 +176,10 @@ class BattleBot(Battle):
             bot_choice = self.find_best_switch()
         logger.debug("Using: {}".format(bot_choice))
         return format_decision(self, bot_choice)
+    
+    def effi_move(battle, move, pokemon2, pokemon1, team):
+        return None
+        # to be further worked upon
 
     ################################################
     # Below is Milestone 3
