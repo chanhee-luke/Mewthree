@@ -183,45 +183,7 @@ class BattleBot(Battle):
     # Below is Milestone 3
     ################################################
 
-    def pick_safest(self, score_lookup):
-        # Helper function that gets rid of moves that have no option
-        modified_score_lookup = remove_guaranteed_opponent_moves(score_lookup)
-        if not modified_score_lookup:
-            modified_score_lookup = score_lookup
-        worst_case = defaultdict(lambda: (tuple(), float('inf')))
-
-        # Simply selects the highest scoring move
-        for move_pair, result in modified_score_lookup.items():
-            if worst_case[move_pair[0]][1] > result:
-                worst_case[move_pair[0]] = move_pair, result
-
-        safest = max(worst_case, key=lambda x: worst_case[x][1])
-        return worst_case[safest]
-
-
-    def pick_bfs_safest_move(self, battle):
-
-        state = battle.create_state()
-        mutator = StateMutator(state)
-        user_options, opponent_options = battle.get_all_options()
-        logger.debug("Attempting to find best move from: {}".format(mutator.state))
-
-        # Builds a tree to search for opponent's moves
-        scores = get_payoff_matrix(mutator, user_options, opponent_options, depth=3, prune=True)
-
-        logger.debug(f"Scores: {scores}")
-
-        decision, payoff = self.pick_safest(scores)
-        bot_choice = decision[0]
-        logger.debug(f"Safest: {bot_choice}, {payoff}")
-        return bot_choice
-
-
-    def find_best_move(self):
-        battles = self.prepare_battles(join_moves_together=True)
-        bot_choice = self.pick_bfs_safest_move(battles[0])
-        return format_decision(self, bot_choice)
-
+    # Milestone 3 copied over to Milestone 5 b/c 5 extends 3
 
     ################################################
     # Below is Milestone 4
@@ -284,5 +246,98 @@ class BattleBot(Battle):
         return orderedTeam
 
     ################################################
-    # Below is Milestone 5
+    # Below is Milestone 5, Milestone 3 Copied over
     ################################################
+
+    def pick_safest(self, score_lookup):
+        # Helper function that gets rid of moves that have no option
+        modified_score_lookup = remove_guaranteed_opponent_moves(score_lookup)
+        if not modified_score_lookup:
+            modified_score_lookup = score_lookup
+        worst_case = defaultdict(lambda: (tuple(), float('inf')))
+
+        logger.debug(f"\nModified Scores: {modified_score_lookup}")
+
+        # Pick move that that minimizes the maxmimum loss
+        for move_pair, result in modified_score_lookup.items():
+            if worst_case[move_pair[0]][1] > result:
+                worst_case[move_pair[0]] = move_pair, result
+
+        safest = max(worst_case, key=lambda x: worst_case[x][1])
+
+        logger.debug(f"Worst case: {worst_case})")
+        return worst_case[safest]
+    
+    def pick_aggresive(self, score_lookup):
+        # Helper function that gets rid of moves that have no option
+        modified_score_lookup = remove_guaranteed_opponent_moves(score_lookup)
+        if not modified_score_lookup:
+            modified_score_lookup = score_lookup
+        worst_case = defaultdict(lambda: (tuple(), float('-inf')))
+
+        logger.debug(f"\nModified Scores: {modified_score_lookup}")
+
+        # Simply selects the highest scoring move
+        for move_pair, result in modified_score_lookup.items():
+            if worst_case[move_pair[0]][1] < result:
+                worst_case[move_pair[0]] = move_pair, result
+
+        aggresive = max(worst_case, key=lambda x: worst_case[x][1])
+
+        logger.debug(f"Worst case: {worst_case})")
+        return worst_case[aggresive]
+
+
+    def is_winning(self, state):
+        """
+            Function to calculate if we are winning by using HP as a metric
+        """
+
+        pokemons = state.self
+        opp_pokemons = state.opponent
+
+        # Initial HPs from active pokemons
+        total_team_hp = pokemons.active.hp / pokemons.active.maxhp if pokemons.active.maxhp != 0 else 0
+        total_opp_hp = opp_pokemons.active.hp / opp_pokemons.active.maxhp if opp_pokemons.active.maxhp != 0 else 0
+
+        for mons in pokemons.reserve.values():
+            if mons.maxhp != 0:
+                total_team_hp += mons.hp / mons.maxhp
+    
+        for mons in opp_pokemons.reserve.values():
+            if mons.maxhp != 0:
+                total_opp_hp += mons.hp / mons.maxhp
+        total_opp_hp += 5 - len(opp_pokemons.reserve) # Unseen opponent pokemon HP
+
+        return total_team_hp > total_opp_hp
+
+
+    def pick_bfs_move(self, battle):
+
+        state = battle.create_state()
+        mutator = StateMutator(state)
+        user_options, opponent_options = battle.get_all_options()
+        logger.debug("Attempting to find best move from: {}".format(mutator.state))
+
+        # Builds a tree to search for opponent's moves, assume opponent picks safest
+        scores = get_payoff_matrix(mutator, user_options, opponent_options, depth=2, prune=True)
+
+        logger.debug(f"\nScores: {scores}")
+
+        move_string = "Aggresive"
+
+        if self.is_winning(state):
+            decision, payoff = self.pick_safest(scores)
+            move_string = "Safest"
+        else:
+            decision, payoff = self.pick_aggresive(scores)
+
+        bot_choice = decision[0]
+        logger.debug(f"{move_string}: {bot_choice}, {payoff}")
+        return bot_choice
+
+
+    def find_best_move(self):
+        battles = self.prepare_battles(join_moves_together=True)
+        bot_choice = self.pick_bfs_move(battles[0])
+        return format_decision(self, bot_choice)
