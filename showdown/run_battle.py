@@ -154,8 +154,8 @@ async def start_battle(ps_websocket_client, pokemon_battle_type):
 
 async def pokemon_battle(ps_websocket_client, pokemon_battle_type):
     battle = await start_battle(ps_websocket_client, pokemon_battle_type)
+    chatted = False
     while True:
-
         msg = await ps_websocket_client.receive_message()
         if battle_is_finished(msg):
             winner = msg.split(constants.WIN_STRING)[-1].split('\n')[0].strip()
@@ -167,4 +167,40 @@ async def pokemon_battle(ps_websocket_client, pokemon_battle_type):
             action_required = await async_update_battle(battle, msg)
             if action_required and not battle.wait:
                 best_move = await async_pick_move(battle)
+
+                playerSide = battle.user
+                opponentSide = battle.opponent
+                pCount = 6;
+                oCount = 6;
+                score=5
+                for pkm in opponentSide.reserve:
+                    if pkm.hp==0:
+                        oCount-=1
+                for pkm in playerSide.reserve:
+                    if pkm.hp==0:
+                        pCount-=1
+                if pCount == 1 and oCount == 1:
+                    score= 0
+                if oCount == 1:
+                    score= 1
+                if pCount == 1:
+                    score = 2
+                if pCount >= oCount+3:
+                    score=3
+                if chatted:
+                    pass
+                elif score == 0: # both sides have one pokemon left
+                    chatted = True
+                    await ps_websocket_client.send_message(battle.battle_tag, ['Close game!'])
+                elif score == 1: # opponent has one pokemon left
+                    chatted = True
+                    await ps_websocket_client.send_message(battle.battle_tag, ['Nice try, guy.'])
+                elif score == 2: # player has one pokemon left
+                    chatted = True
+                    await ps_websocket_client.send_message(battle.battle_tag, ['Please forfeit :c'])
+                elif score == 3: # player has three more Pokemon than the opponent
+                    chatted = True
+                    await ps_websocket_client.send_message(battle.battle_tag, ['I must be playing against a bot.'])
+
+
                 await ps_websocket_client.send_message(battle.battle_tag, best_move)

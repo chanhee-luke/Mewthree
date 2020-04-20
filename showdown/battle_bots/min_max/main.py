@@ -10,6 +10,8 @@ from ..helpers import format_decision
 from data.helpers import get_all_likely_moves
 from showdown.engine.damage_calculator import _calculate_damage
 from showdown.engine.damage_calculator import get_move
+from showdown.websocket_client import PSWebsocketClient
+
 
 from .tree import Tree
 
@@ -176,10 +178,6 @@ class BattleBot(Battle):
             bot_choice = self.find_best_switch()
         logger.debug("Using: {}".format(bot_choice))
         return format_decision(self, bot_choice)
-    
-    def effi_move(battle, move, pokemon2, pokemon1, team):
-        return None
-        # to be further worked upon
 
     ################################################
     # Below is Milestone 3
@@ -212,19 +210,19 @@ class BattleBot(Battle):
         scores = get_payoff_matrix(mutator, user_options, opponent_options, depth=3, prune=True)
 
         logger.debug(f"Scores: {scores}")
-        
+
         decision, payoff = self.pick_safest(scores)
         bot_choice = decision[0]
         logger.debug(f"Safest: {bot_choice}, {payoff}")
         return bot_choice
-    
+
 
     def find_best_move(self):
         battles = self.prepare_battles(join_moves_together=True)
         bot_choice = self.pick_bfs_safest_move(battles[0])
         return format_decision(self, bot_choice)
-    
-    
+
+
     ################################################
     # Below is Milestone 4
     ################################################
@@ -284,3 +282,45 @@ class BattleBot(Battle):
             orderedTeam.sort(key=lambda x: x[1], reverse=True)
 
         return orderedTeam
+
+    ################################################
+    # Below is Milestone 5
+    ################################################
+    def chat_function(self,battle):
+        score = self.winning_analysis(battle)
+        print(battle.chatted)
+        if battle.chatted:
+            return
+        if score == 0: # both sides have one pokemon left
+            battle.chatted = True
+            ps_websocket_client.send_message(battle.battle_tag, ['Close game!'])
+        elif score == 1: # opponent has one pokemon left
+            battle.chatted = True
+            ps_websocket_client.send_message(battle.battle_tag, ['Nice try, guy.'])
+        elif score == 2: # player has one pokemon left
+            battle.chatted = True
+            ps_websocket_client.send_message(battle.battle_tag, ['Please forfeit :c'])
+        elif score == 3: # player has three more Pokemon than the opponent
+            battle.chatted = True
+            ps_websocket_client.send_message(battle.battle_tag, ['I must be playing against a bot.'])
+        battle.chatted = True
+    def winning_analysis(self,battle):
+        playerSide = battle.user
+        opponentSide = battle.opponent
+        pCount = 6;
+        oCount = 6;
+        for pkm in opponentSide.reserve:
+            if pkm.hp==0:
+                oCount-=1
+        for pkm in playerSide.reserve:
+            if pkm.hp==0:
+                pCount-=1
+        if pCount == 1 and oCount == 1:
+            return 0
+        if oCount == 1:
+            return 1
+        if pCount == 1:
+            return 2
+        if pCount >= oCount+3:
+            return 3
+        return 5
