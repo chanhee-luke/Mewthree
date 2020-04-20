@@ -9,7 +9,7 @@ This bot has a Makefile, where you must run `make install` and then `make test` 
 
 Currently, it only switches into the safest Pokemon using Maximin.
 
-## Milestone 2 & 3 & 4 (04/06)
+## Milestone 2 & 3 & 4 & 5(04/20)
 
 ### Overview of the bot
 
@@ -24,6 +24,12 @@ For this milestone the bot searchs beyond the current game state to future game 
 ### For Milestone 4
 
 In this latest update, the bot has been given some new features in order to improve its Pokemon selection against the opponent. We included a make_best_order() which ranks the user's pokemons based on their damage compared to the enemy team. It returns a list of pokemons which has been sorted by their efficiencies. It compares each of the bot's Pokemons with that of the opponent. In order to do this, there is an additional funciton pokemonEfficiency() to calculate their efficiency based on their stats.
+
+### For Milestone 5
+
+In this update, we're finalizing our feature set. First, we added new chat features that happen from specific circumstances in the game. For example, we check if we have 3 more Pokemon than the opponent, and we then decide to chat and suggest that we are the ones playing against a bot. It doesn't really affect performance of the bot, but it was a fun feature that we had wanted. This was done in run_battle.py, and any chat implementation can be further added there.
+
+The next feature we implemented was (CHANHEE ADD)
 
 ### Dependencies
 
