@@ -29,7 +29,16 @@ In this latest update, the bot has been given some new features in order to impr
 
 In this update, we're finalizing our feature set. First, we added new chat features that happen from specific circumstances in the game. For example, we check if we have 3 more Pokemon than the opponent, and we then decide to chat and suggest that we are the ones playing against a bot. It doesn't really affect performance of the bot, but it was a fun feature that we had wanted. This was done in run_battle.py, and any chat implementation can be further added there.
 
-The next feature we implemented was (CHANHEE ADD)
+The next feature we implemented was deciding if the bot will be aggressive or be defensive. Using HP as a metric, we made the bot more aggressive when behind and be more defensive when ahead. Aggressive moves are defined as a high-risk, high-return moves and defensive moves are defined as low-risk, low-return moves. We believe taking more aggressive approach when behind will enable us to beat the opponent better. 
+
+Some ways to improve the bot is to take account of the opponent’s actions when creating the game which we will implement in the final project. Currently we don’t have any magic variables because everything is automated because the bot currently follows the following logic:
+
+1. Checks who is winning by calculating HPs for both sides
+2. Create the game tree (depth=2) by assuming opponent picks safest moves
+3. Pick aggressive moves if the bot is losing, picking defensive move if the bot is winning
+
+We will add magic variable for our final project that consists of 1) The game tree depth 2) Bot aggressiveness level.
+The bot aggressiveness level is left to our final project because it needs to be tweaked together with the game tree depth to be effective because the current game tree only assumes the opponent will pick the defensive moves. By incorporating opponent’s previous moves when building the game tree we intend to make the bot more adaptable in our final project. 
 
 ### Dependencies
 
