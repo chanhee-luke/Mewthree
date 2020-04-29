@@ -47,7 +47,7 @@ For unimplemented features, we currently assume the opponent is going to make th
 We didn't get to implement any machine learning bot. This proved to be out of scope for our project as we decided to iteratively improve our one bot.
 
 ### For Future Contributors
-All bots are under showdown/battle_bots/ and all bots should be structured as an object inheriting the Battle class. The only method that is called by the websocket is the find_best_move() method and its the minimum method one needs to implement in order to make the bot functional. Check battle.py under showdown/ to see what methods and attributes the Battle class has. 
+All bots are under `showdown/battle_bots/` and all bots should be structured as an object inheriting the Battle class. The only method that is called by the websocket is the `find_best_move()` method and its the minimum method one needs to implement in order to make the bot functional. Check `battle.py` under `showdown/` to see what methods and attributes the Battle class has. 
 
 ### Dependencies
 
