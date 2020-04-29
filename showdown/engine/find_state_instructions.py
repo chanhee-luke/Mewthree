@@ -422,7 +422,7 @@ def end_of_turn_triggered(user_move, opponent_move):
     return True
 
 
-def get_all_state_instructions(mutator, user_move_string, opponent_move_string):
+def get_all_state_instructions(mutator, user_move_string, opponent_move_string, is_winning):
     user_move = lookup_move(user_move_string)
     opponent_move = lookup_move(opponent_move_string)
 

@@ -53,6 +53,21 @@ def pick_safest(score_lookup):
     safest = max(worst_case, key=lambda x: worst_case[x][1])
     return worst_case[safest]
 
+def pick_aggresive(score_lookup):
+    # Helper function that gets rid of moves that have no option
+    modified_score_lookup = remove_guaranteed_opponent_moves(score_lookup)
+    if not modified_score_lookup:
+        modified_score_lookup = score_lookup
+    worst_case = defaultdict(lambda: (tuple(), float('-inf')))
+
+    # Simply selects the highest scoring move
+    for move_pair, result in modified_score_lookup.items():
+        if worst_case[move_pair[0]][1] < result:
+            worst_case[move_pair[0]] = move_pair, result
+
+    aggresive = max(worst_case, key=lambda x: worst_case[x][1])
+
+    return worst_case[aggresive]
 
 def move_item_to_front_of_list(l, item):
     all_indicies = list(range(len(l)))
@@ -62,7 +77,7 @@ def move_item_to_front_of_list(l, item):
     return [l[i] for i in all_indicies]
 
 
-def get_payoff_matrix(mutator, user_options, opponent_options, depth=2, prune=True):
+def get_payoff_matrix(mutator, user_options, opponent_options, is_winning=True, depth=2, prune=True):
     """
     :param mutator: a StateMutator object representing the state of the battle
     :param user_options: options for the bot
@@ -99,7 +114,7 @@ def get_payoff_matrix(mutator, user_options, opponent_options, depth=2, prune=Tr
                 continue
 
             score = 0
-            state_instructions = get_all_state_instructions(mutator, user_move, opponent_move)
+            state_instructions = get_all_state_instructions(mutator, user_move, opponent_move, is_winning)
             if depth == 0:
                 for instructions in state_instructions:
                     mutator.apply(instructions.instructions)
@@ -112,8 +127,12 @@ def get_payoff_matrix(mutator, user_options, opponent_options, depth=2, prune=Tr
                     this_percentage = instructions.percentage
                     mutator.apply(instructions.instructions)
                     next_turn_user_options, next_turn_opponent_options = mutator.state.get_all_options()
-                    safest = pick_safest(get_payoff_matrix(mutator, next_turn_user_options, next_turn_opponent_options, depth=depth, prune=prune))
-                    score += safest[1] * this_percentage
+                    # If we are winning, we pick safest
+                    if is_winning:
+                        move = pick_safest(get_payoff_matrix(mutator, next_turn_user_options, next_turn_opponent_options, is_winning, depth=depth, prune=prune))
+                    else:
+                        move = pick_aggresive(get_payoff_matrix(mutator, next_turn_user_options, next_turn_opponent_options, is_winning, depth=depth, prune=prune))
+                    score += move[1] * this_percentage
                     mutator.reverse(instructions.instructions)
 
             state_scores[(user_move, opponent_move)] = score

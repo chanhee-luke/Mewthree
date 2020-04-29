@@ -190,19 +190,19 @@ class BattleBot(Battle):
     ################################################
 
     #helper function for calculating stats
-    def stat_calculation(base, level, ev):
+    def stat_calculation(self, base, level, ev):
         # calculating stats from base stat, level, and ev
         return floor(((2 * base + 31 + floor(ev / 4)) * level) / 100 + 5)
 
-    def pokemonEfficiency(battle, pokemon1, pokemon2, team):
+    def pokemonEfficiency(self, battle, pokemon1, pokemon2, team):
         # comparing efficiency of user pokemon vs opponent pokemon
         # if efficiency of pokemon is greater than 150, the other pokemon's efficiency isn't taken
         # also note: pokemonEfficiency(a, b, team_a) = - pokemonEfficiency(b, a, team_b)
         efficiency1 = 0
         efficiency2 = 0
 
-        pokemon1_stat = stat_calculation(pokemon1.stats["spe"], pokemon1.level, 252) * pokemon1.buff_affect("spe")
-        pokemon2_stat = stat_calculation(pokemon2.stats["spe"], pokemon2.level, 252) * pokemon2.buff_affect("spe")
+        pokemon1_stat = self.stat_calculation(pokemon1.stats["spe"], pokemon1.level, 252) * pokemon1.buff_affect("spe")
+        pokemon2_stat = self.stat_calculation(pokemon2.stats["spe"], pokemon2.level, 252) * pokemon2.buff_affect("spe")
 
         for move in pokemon1.moves:
             dmg = effi_move(battle, move, pokemon1, pokemon2, team)
@@ -236,7 +236,7 @@ class BattleBot(Battle):
             for enemy_pokemon in opponent.reserve:
 
                 efficiency = -1024
-                efficiency = pokemonEfficiency(battle, pokemon, enemy_pokemon, opponent)
+                efficiency = self.pokemonEfficiency(battle, pokemon, enemy_pokemon, opponent)
                 avgEfficiency += efficiency
 
             avgEfficiency /= 6
@@ -319,14 +319,16 @@ class BattleBot(Battle):
         user_options, opponent_options = battle.get_all_options()
         logger.debug("Attempting to find best move from: {}".format(mutator.state))
 
+        is_winning = self.is_winning(state)
+
         # Builds a tree to search for opponent's moves, assume opponent picks safest
-        scores = get_payoff_matrix(mutator, user_options, opponent_options, depth=2, prune=True)
+        scores = get_payoff_matrix(mutator, user_options, opponent_options, is_winning, depth=3, prune=True)
 
         logger.debug(f"\nScores: {scores}")
 
         move_string = "Aggresive"
 
-        if self.is_winning(state):
+        if is_winning:
             decision, payoff = self.pick_safest(scores)
             move_string = "Safest"
         else:
