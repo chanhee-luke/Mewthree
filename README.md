@@ -7,7 +7,7 @@ This bot is assuming we're doing random battles in generation 5.
 
 This bot has a Makefile, where you must run `make install` and then `make test` to run the bot. `make clean` will remove the virtual environment installed.
 
-## Milestone 2 & 3 & 4 & 5(04/20)
+## Milestone 2 & 3 & 4 & 5 & final(04/29)
 
 ### Overview of the bot
 
@@ -37,6 +37,14 @@ Some ways to improve the bot is to take account of the opponent’s actions when
 
 We will add magic variable for our final project that consists of 1) The game tree depth 2) Bot aggressiveness level.
 The bot aggressiveness level is left to our final project because it needs to be tweaked together with the game tree depth to be effective because the current game tree only assumes the opponent will pick the defensive moves. By incorporating opponent’s previous moves when building the game tree we intend to make the bot more adaptable in our final project. 
+
+### Final Update
+
+For outstanding bugs, there are a lot of unknown moves, sets, and general errors from the forked bot. Unfortunately, these are not errors we can fix very well, unless we go into the dictionary files and find information manually ourselves. A lof of these bugs stem from the engine. Other than that, our bot still runs to completion, although some moves are very questionable.
+
+For unimplemented features, we currently assume the opponent is going to make their safest move as well. In the future, we would like to predict them to play more aggressively, defensively, etc. This would hopefully improve our winrate and elo gain.
+
+We didn't get to implement any machine learning bot. This proved to be out of scope for our project as we decided to iteratively improve our one bot.
 
 ### Dependencies
 
