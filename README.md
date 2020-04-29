@@ -40,9 +40,9 @@ The bot aggressiveness level is left to our final project because it needs to be
 
 ### Final Update
 
-For outstanding bugs, there are a lot of unknown moves, sets, and general errors from the forked bot. Unfortunately, these are not errors we can fix very well, unless we go into the dictionary files and find information manually ourselves. A lof of these bugs stem from the engine. Other than that, our bot still runs to completion, although some moves are still very questionable such as trying to constantly use a move that cannot affect the opponent.
+For outstanding bugs, there are a lot of unknown moves, sets, and general errors from the forked bot. Unfortunately, these are not errors we can fix very well, unless we go into the dictionary files and find information manually ourselves. A lot of these bugs stem from the engine. One example is the Other than that, our bot still runs to completion, although some moves are still very questionable such as trying to constantly use a move that cannot affect the opponent.
 
-For unimplemented features, we currently assume the opponent is going to make their safest move when ahead and aggressive move when behind. In the future, we would like to predict them to play more aggressively, defensively, etc. This would hopefully improve our winrate and elo gain.
+For unimplemented features, we currently assume the opponent is going to make their safest move when ahead and aggressive move when behind. In the future, we would like to predict them to play more aggressively, defensively, etc. This would hopefully improve our winrate and elo gain. Furthermore, the bot could build a deeper search tree but currently we limit ourselves to depth 3 to lessen decision making time. We also only can play a single game on the Gen5 Random Battle.
 
 We didn't get to implement any machine learning bot. This proved to be out of scope for our project as we decided to iteratively improve our one bot.
 
