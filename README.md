@@ -7,8 +7,6 @@ This bot is assuming we're doing random battles in generation 5.
 
 This bot has a Makefile, where you must run `make install` and then `make test` to run the bot. `make clean` will remove the virtual environment installed.
 
-Currently, it only switches into the safest Pokemon using Maximin.
-
 ## Milestone 2 & 3 & 4 & 5(04/20)
 
 ### Overview of the bot
